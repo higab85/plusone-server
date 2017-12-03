@@ -3,6 +3,7 @@ from flask import Flask, request, jsonify, make_response
 from flask_sqlalchemy import SQLAlchemy
 import uuid
 from werkzeug.security import generate_password_hash, check_password_hash
+from sqlalchemy.orm.session import _SessionClassMethods
 import jwt
 import datetime
 from functools import wraps
@@ -19,6 +20,7 @@ app.config['SECRET_KEY'] = "mysecret"
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:mysql@localhost/plusone'
 
 db = SQLAlchemy(app)
+
 
 # users_attending_events = Table('users_attending_events', Base.metadata,
 #     Column('user_id', Integer, ForeignKey('User.id')),
@@ -162,10 +164,13 @@ def get_all_events(current_user):
 @app.route('/event/<event_id>', methods=['GET'])
 @token_required
 def get_one_event(current_user, event_id):
-    event = event.query.filter_by(id=event_id, user_id=current_user.id).first()
+    event = Event.query.filter_by(id=event_id).first()
 
     if not event:
         return jsonify({'message' : 'No event found'})
+
+    # query = User.query.filter(User.id==user_id, User.attending_events.contains(event))
+
 
     event_data = {}
     event_data['id'] = event.id
@@ -177,6 +182,10 @@ def get_one_event(current_user, event_id):
     event_data['type'] = event.type
     event_data['latitude'] = event.latitude
     event_data['longitude'] = event.longitude
+
+    event_data['subscribed'] =  db.session.query(db.session.query(User).filter(event in set(current_user.attending_events.all())).exists()).scalar()
+
+    # event_data['attending'] = users_attending_events.user_id.filter(current_user.id) event_id=event_id).first() != None
 
     return jsonify(event_data)
 
