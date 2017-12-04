@@ -3,6 +3,7 @@ from flask import Flask, request, jsonify, make_response
 from flask_sqlalchemy import SQLAlchemy
 import uuid
 import jwt
+import os
 import datetime
 from functools import wraps
 
@@ -40,7 +41,8 @@ from chat import *
 
 if __name__ == '__main__':
      app.debug = True
-     app.run(host='0.0.0.0', port=5000, threaded=True)
+     port = int(os.environ.get("PORT", 5000))
+     app.run(host='0.0.0.0', port=port, threaded=True)
     # app.run(debug=True,host='0.0.0.0')
 
     # NOTE: only for testing, in production use above line and comment the
