@@ -39,8 +39,11 @@ from chat import *
 
 
 if __name__ == '__main__':
-        # app.run(debug=True,host='0.0.0.0')
+     app.debug = True
+     port = int(os.environ.get("PORT", 5000))
+     app.run(host='0.0.0.0', port=port, threaded=True)
+    # app.run(debug=True,host='0.0.0.0')
 
-        # NOTE: only for testing, in production use above line and comment the
-        # one below
-        app.run(debug=True, threaded=True)
+    # NOTE: only for testing, in production use above line and comment the
+    # one below
+    #app.run(debug=True, threaded=True)
