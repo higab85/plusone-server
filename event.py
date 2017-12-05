@@ -7,7 +7,7 @@ from models import Event
 @app.route('/event', methods=['GET'])
 @token_required
 def get_all_events(current_user):
-    events = Event.query.filter(Event.user_id==current_user.id)
+    events = Event.query.filter(Event.user_id==current_user.public_id)
 
     output = []
     for event in events:
@@ -56,7 +56,7 @@ def create_event(current_user):
 
     new_event = Event(
         public_id=str(uuid.uuid4()),
-        user_id=current_user.id,
+        user_id=current_user.public_id,
         name=data['name'],
         description=data['description'],
         start=data['start'],
@@ -95,7 +95,7 @@ def toggle_subcribe_to_event(current_user, event_id):
 @app.route('/event/<event_id>', methods=['DELETE'])
 @token_required
 def delete_event(current_user, event_id):
-    event = Event.query.filter_by(id=event_id, user_id=current_user.id).first()
+    event = Event.query.filter_by(id=event_id, user_id=current_user.public_id).first()
 
     if not event:
         return jsonify({'message' : 'You are not authorised to delete this event, or this event does not exist.'})
