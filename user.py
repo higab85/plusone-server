@@ -1,4 +1,4 @@
-from main import app, token_required
+from main import app, token_required, db
 from flask import jsonify, make_response, request
 from werkzeug.security import generate_password_hash, check_password_hash
 import uuid
