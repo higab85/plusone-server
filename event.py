@@ -7,7 +7,7 @@ from models import Event
 @app.route('/event', methods=['GET'])
 @token_required
 def get_all_events(current_user):
-    events = Event.query.filter_by(user_id=current_user.id)
+    events = Event.query.filter(Event.user_id==current_user.id)
 
     output = []
     for event in events:
