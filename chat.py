@@ -14,7 +14,7 @@ class Chat_history(db.Model):
 @socketio.on('message')
 def handleMessage(msg):
     print('Message: ' + msg)
-    print('Path: ' + jsonify(socketio))
+    # print('Path: ' + jsonify(socketio))
     message = Chat_history(message=msg, conversation=socketio.path)
     db.session.add(message)
     db.session.commit()
