@@ -6,11 +6,7 @@
 <body>
   <script type="text/javascript">
     $(document).ready(function(){
-      var socket = io.connect('https://fierce-plateau-73728.herokuapp.com');
-
-      socket.on('connect', function(){
-        socket.send('User has connected!');
-      });
+      var socket = io.connect('https://' + document.domain + ':' + location.port);
 
       socket.on('message', function(msg){
         $("#messages").append('<li>'+msg+'</li>')

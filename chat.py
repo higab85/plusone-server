@@ -21,7 +21,7 @@ def handleMessage(msg):
 
     send(msg, broadcast=True)
 
-@app.route('/<conversation>')
+@app.route('/chat/<conversation>')
 def index(conversation):
     messages = Chat_history.query.filter_by(conversation=conversation)
     return render_template('index.html', messages=messages)
