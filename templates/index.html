@@ -6,7 +6,7 @@
 <body>
   <script type="text/javascript">
     $(document).ready(function(){
-      var socket = io.connect('http://127.0.0.1:5000');
+      var socket = io.connect('https://fierce-plateau-73728.herokuapp.com');
 
       socket.on('connect', function(){
         socket.send('User has connected!');
@@ -25,7 +25,7 @@
   </script>
   <ul id="messages">
     {% for msg in messages %}
-      <li>{{ msg.message }} </li> 
+      <li>{{ msg.message }} </li>
     {% endfor %}
   </ul>
   <input type="text" id="myMessage">
