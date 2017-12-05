@@ -1,5 +1,5 @@
 # https://www.youtube.com/watch?v=RdSrkkrj3l4
-from flask import render_template, jsonify
+from flask import render_template, request
 from flask_socketio import SocketIO, send
 from main import app, db
 
@@ -14,8 +14,8 @@ class Chat_history(db.Model):
 @socketio.on('message')
 def handleMessage(msg):
     print('Message: ' + msg)
-    # print('Path: ' + jsonify(socketio))
-    message = Chat_history(message=msg, conversation=socketio.path)
+    path = request.path
+    message = Chat_history(message=msg, conversation=path[6:])
     db.session.add(message)
     db.session.commit()
 
