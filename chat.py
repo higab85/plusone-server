@@ -4,6 +4,7 @@ from flask_socketio import SocketIO, send
 from main import app, db
 
 socketio = SocketIO(app)
+chatPool = socketio.of('/chat')
 
 class Chat_history(db.Model):
     id = db.Column('id', db.Integer, primary_key=True)
@@ -14,12 +15,12 @@ class Chat_history(db.Model):
 @socketio.on('message')
 def handleMessage(msg):
     print('Message: ' + msg)
-    path = request.path
-    message = Chat_history(message=msg, conversation=path[6:])
+    conversation = request.path[6:]
+    message = Chat_history(message=msg, conversation=conversation)
     db.session.add(message)
     db.session.commit()
 
-    send(msg, broadcast=True)
+    chatPool.to(conversation).emit(msg)
 
 @app.route('/chat/<conversation>')
 def index(conversation):
