@@ -4,37 +4,14 @@ import uuid
 from models import Event
 
 
-@app.route('/event', methods=['GET'])
-@token_required
-def get_all_events(current_user):
-    events = Event.query.filter(Event.user_id==current_user.public_id)
-
+def jsonifyEvents(events):
     output = []
     for event in events:
-        event_data = {}
-        event_data['id'] = event.id
-        event_data['user_id'] = event.user_id
-        event_data['name'] = event.name
-        event_data['description'] = event.description
-        event_data['start'] = event.start
-        event_data['end'] = event.end
-        event_data['type'] = event.type
-        event_data['latitude'] = event.latitude
-        event_data['longitude'] = event.longitude
+        event_data = get_event_data(event)
         output.append(event_data)
-
     return jsonify(output)
 
-@app.route('/event/<event_id>', methods=['GET'])
-@token_required
-def get_one_event(current_user, event_id):
-    event = Event.query.filter_by(id=event_id).first()
-
-    if not event:
-        return jsonify({'message' : 'No event found'})
-
-
-
+def get_event_data(event):
     event_data = {}
     event_data['id'] = event.id
     event_data['user_id'] = event.user_id
@@ -46,6 +23,47 @@ def get_one_event(current_user, event_id):
     event_data['latitude'] = event.latitude
     event_data['longitude'] = event.longitude
     event_data['subscribed'] =  event in set(current_user.attending_events.all())
+    return event_data
+
+@app.route('/event', methods=['GET'])
+@token_required
+def get_all_events(current_user):
+    events = Event.query.filter(Event.user_id==current_user.public_id).all()
+    return jsonifyEvents(events)
+
+@app.route('/event', methods=['GET'])
+@token_required
+def search_events(current_user):
+    args = request.args
+
+    attributes = {
+        'name':Event.name,
+        'user_id':Event.user_id,
+        'description':Event.description,
+        'start':Event.start,
+        'end':Event.end,
+        'type':Event.type,
+        'latitude': Event.latitude,
+        'longitude': Event.longitude
+    }
+
+    events = Event.query
+    for (key,value) in args:
+        events.filter(attributes[key] == value)
+
+    return jsonifyEvents(events)
+
+
+
+@app.route('/event/<event_id>', methods=['GET'])
+@token_required
+def get_one_event(current_user, event_id):
+    event = Event.query.filter_by(id=event_id).first()
+
+    if not event:
+        return jsonify({'message' : 'No event found'})
+
+    event_data = get_event_data(event)
 
     return jsonify(event_data)
 
