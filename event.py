@@ -49,6 +49,7 @@ def search_events(current_user):
 
     events = Event.query
     for (key,value) in args:
+        print("filter: %s == %s\n", attributes[key], value)
         events.filter(attributes[key] == value)
 
     return jsonifyEvents(events, current_user)
