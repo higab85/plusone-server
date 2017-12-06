@@ -48,7 +48,7 @@ def search_events(current_user):
     }
 
     print("args: %s" args)
-    events = Event.query
+    events = Event.query.all()
     for (key,value) in args:
         print("filter: %s == %s\n", attributes[key], value)
         events.filter(attributes[key] == value)
