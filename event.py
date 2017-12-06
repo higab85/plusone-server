@@ -22,7 +22,7 @@ def get_event_data(event, current_user):
     event_data['type'] = event.type
     event_data['latitude'] = event.latitude
     event_data['longitude'] = event.longitude
-    event_data['subscribed'] =  event in set(current_user.attending_events.all())
+    event_data['subscription'] =  event in set(current_user.attending_events.all())
     return event_data
 
 @app.route('/event', methods=['GET'])
