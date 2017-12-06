@@ -4,14 +4,14 @@ import uuid
 from models import Event
 
 
-def jsonifyEvents(events):
+def jsonifyEvents(events, current_user):
     output = []
     for event in events:
-        event_data = get_event_data(event)
+        event_data = get_event_data(event, current_user)
         output.append(event_data)
     return jsonify(output)
 
-def get_event_data(event):
+def get_event_data(event, current_user):
     event_data = {}
     event_data['id'] = event.id
     event_data['user_id'] = event.user_id
@@ -63,7 +63,7 @@ def get_one_event(current_user, event_id):
     if not event:
         return jsonify({'message' : 'No event found'})
 
-    event_data = get_event_data(event)
+    event_data = get_event_data(event, current_user)
 
     return jsonify(event_data)
 
