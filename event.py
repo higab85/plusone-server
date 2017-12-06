@@ -93,7 +93,7 @@ def toggle_subcribe_to_event(current_user, event_id):
 
     operation = ""
 
-    if current_user.attending_events.filter(event_id_str).first():
+    if current_user.attending_events.contains(event_id_str).first():
         current_user.attending_events.remove(event)
         operation = "Succcessfully unsubscribed."
     else:
