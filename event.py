@@ -29,7 +29,7 @@ def get_event_data(event, current_user):
 @token_required
 def get_all_events(current_user):
     events = Event.query.filter(Event.user_id==current_user.public_id).all()
-    return jsonifyEvents(events)
+    return jsonifyEvents(events, current_user)
 
 @app.route('/event', methods=['GET'])
 @token_required
@@ -51,7 +51,7 @@ def search_events(current_user):
     for (key,value) in args:
         events.filter(attributes[key] == value)
 
-    return jsonifyEvents(events)
+    return jsonifyEvents(events, current_user)
 
 
 
