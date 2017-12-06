@@ -25,15 +25,9 @@ def get_event_data(event, current_user):
     event_data['subscribed'] =  event in set(current_user.attending_events.all())
     return event_data
 
-# @app.route('/event', methods=['GET'])
-# @token_required
-# def get_all_events(current_user):
-#     events = Event.query.filter(Event.user_id==current_user.public_id).all()
-#     return jsonifyEvents(events, current_user)
-
 @app.route('/event', methods=['GET'])
 @token_required
-def search_events(current_user):
+def get_events(current_user):
     args = request.args
 
     attributes = {
