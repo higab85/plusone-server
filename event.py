@@ -47,8 +47,8 @@ def search_events(current_user):
         'longitude': Event.longitude
     }
 
-    print("args: %s" args)
-    events = Event.query.all()
+    print("args: %s", args)
+    events = Event.query
     for (key,value) in args:
         print("filter: %s == %s\n", attributes[key], value)
         events.filter(attributes[key] == value)
