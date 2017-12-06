@@ -85,14 +85,15 @@ def create_event(current_user):
 @app.route('/event/<event_id>', methods=['POST'])
 @token_required
 def toggle_subcribe_to_event(current_user, event_id):
-    event = Event.query.filter_by(id=event_id).first()
+    event_id_str = str(event_id)
+    event = Event.query.filter_by(id=event_id_str).first()
 
     if not event:
         return jsonify({'message' : 'No event found'})
 
     operation = ""
 
-    if current_user.attending_events.filter(str(event.id)).first():
+    if current_user.attending_events.filter(event_id_str).first():
         current_user.attending_events.remove(event)
         operation = "Succcessfully unsubscribed."
     else:
