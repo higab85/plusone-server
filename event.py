@@ -43,7 +43,7 @@ def get_events(current_user):
 
     events = Event.query
     for key in args:
-        events = events.filter(attributes[key] == args[key])
+        events = events.filter(attributes[key].contains(args[key]))
 
     return jsonifyEvents(events, current_user)
 
