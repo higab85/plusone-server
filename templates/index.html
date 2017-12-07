@@ -6,25 +6,22 @@
 <body>
   <script type="text/javascript">
     $(document).ready(function(){
-      var socket = io.connect('https://' + document.URL + ':' + location.port);
+      var socket = io.connect('https://' + document.domain + ':' + location.port);
 
-      socket.on('message', function(msg){
-        $("#messages").append('<li>'+msg+'</li>')
+      // var socket = io.connect("https://fierce-plateau-73728.herokuapp.com:5000");
+      	socket.on('connect', function() {
+      		socket.send('User has connected!');
+      	});
+      	socket.on('message', function(msg) {
+      		$("#messages").append('<li>'+msg+'</li>');
+      		console.log('Received message');
+      	});
+      	$('#sendbutton').on('click', function() {
+      		socket.send($('#myMessage').val());
+      		$('#myMessage').val('');
+      	});
       });
-
-      $('#sendbutton').on('click', function(){
-        socket.send($('#myMessage').val());
-        $('#myMessage').val('');
-      });
-
-    });
-  </script>
-  <ul id="messages">
-    {% for msg in messages %}
-      <li>{{ msg.message }} </li>
-    {% endfor %}
-  </ul>
-  <input type="text" id="myMessage">
+      </script>
+    <ul id="messages"></ul>
+    <input type="text" id="myMessage">
   <button id="sendbutton">Send</button>
-  </body>
-</html>
