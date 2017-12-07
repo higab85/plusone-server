@@ -11,6 +11,7 @@ class Chat_history(db.Model):
     conversation = db.Column('conversation', db.String(100))
 
 # @app.route('/<conversation>')
+#
 @socketio.on('message')
 def handleMessage(msg):
     print('Message: ' + msg)
