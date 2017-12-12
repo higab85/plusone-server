@@ -24,10 +24,10 @@ def get_all_users(current_user):
     return jsonify({'users': output})
 
 # NOTE: FOR DEBUG ONLY, NOT FOR PRODUCTION
-@app.route('/user/<public_id>', methods=['GET'])
+@app.route('/user/<email>', methods=['GET'])
 @token_required
 def get_one_user(current_user, public_id):
-    user = User.query.filter_by(public_id=public_id).first()
+    user = User.query.filter_by(email=email).first()
 
     if not user:
         return jsonify({'message':'No user found!'})

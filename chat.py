@@ -1,63 +1,78 @@
 # https://www.youtube.com/watch?v=RdSrkkrj3l4
-from flask import render_template, request
-from flask_socketio import SocketIO, send, emit
+from flask import render_template, request, session
+from flask_socketio import SocketIO, send, emit, join_room, leave_room
 from main import app, db
+import math
 
 socketio = SocketIO(app)
 num_users = 0
 addedUser = False
 session = {}
+username = ""
+room = ""
 
 class Chat_history(db.Model):
     id = db.Column('id', db.Integer, primary_key=True)
     message = db.Column('message', db.String(500))
     conversation = db.Column('conversation', db.String(100))
+    username = db.Column('user', db.String(100))
 
-
-@socketio.on('add user')
-def on_add_user(username):
-    global addedUser, num_users
-    session['username'] = username
-
-    # messages = Chat_history.query.all() # filter_by(conversation=conversation)
-
-    if addedUser:
-        num_users+=1
-    addedUser = True
-    emit('login', {
-        'numUsers':num_users
-        })
-    # for message in messages:
-    #     emit('')
+@socketio.on('join')
+def on_join(data):
+    global room,username, addedUser, num_users
+    # print('recieved: ' + str(data))
+    username = data['username']
+    # print('username: ' , username)
+    room = str(data['room'])
+    print("User '" + username + "' conected to room " + str(room) + " addedUser:" + str(addedUser))
+    join_room(room)
+    print("username: " + username + ", numUsers: " + str(num_users) + "is joining")
     emit('user joined', {
-        'username': session['username'],
-        'numUsers': num_users
-    }, broadcast=True)
+        'username': username,
+        'numUsers': str(num_users)
+    }, room=room)
+    num_users+=1
+    messages = Chat_history.query.filter_by(conversation=room)
+    for message in messages:
+        emit('new message', {
+        'username':message.username,
+        'message':message.message
+    })
+
+
 
 @socketio.on('typing')
 def on_typing():
-     emit('typing', {'username':session['username']})
+    print(username + " is typing")
+    emit('typing', {'username':username})
 
 @socketio.on('stop typing')
 def stop_typing():
-    emit('stop typing', {'username':session['username']})
+    emit('stop typing', {'username':username})
 
 @socketio.on('disconnect')
 def on_disconnect():
     global addedUser, num_users
-    if addedUser:
-         num_users-=1
-    emit('user left', {'username':session['username']})
+    # if addedUser:
+    #      num_users-=1
+    # emit('user left', {'username':session['username']})
+    room = session.get('room')
+    leave_room(room)
+    print("username: " + username + ", numUsers: " + str(num_users) + "is leaving")
+    emit('user joined', {
+        'username':username,
+        'numUsers': str(num_users)
+    }, room=room)
 
 # @app.route('/<conversation>')
 @socketio.on('new message')
 def handleMessage(data):
     emit('new message', {
-        'username':session['username'],
+        'username':username,
         'message':data
-    })
-
-    message = Chat_history(message=data)
+    }, room=room)
+    print("saving '" + data + "' from user '" + username + "' to room " + room)
+    message = Chat_history(message=data, username=username, conversation=room)
     db.session.add(message)
     db.session.commit()
 
