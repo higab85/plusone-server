@@ -26,7 +26,7 @@ def get_all_users(current_user):
 # NOTE: FOR DEBUG ONLY, NOT FOR PRODUCTION
 @app.route('/user/<email>', methods=['GET'])
 @token_required
-def get_one_user(current_user, public_id):
+def get_one_user(current_user, email):
     user = User.query.filter_by(email=email).first()
 
     if not user:
