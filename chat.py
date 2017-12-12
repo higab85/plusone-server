@@ -37,18 +37,18 @@ def on_join(data):
         emit('new message', {
         'username':message.username,
         'message':message.message
-    })
+    }, room=room)
 
 
 
 @socketio.on('typing')
 def on_typing():
     print(username + " is typing")
-    emit('typing', {'username':username})
+    emit('typing', {'username':username}, room=room)
 
 @socketio.on('stop typing')
 def stop_typing():
-    emit('stop typing', {'username':username})
+    emit('stop typing', {'username':username}, room=room)
 
 @socketio.on('disconnect')
 def on_disconnect():
@@ -59,6 +59,7 @@ def on_disconnect():
     room = session.get('room')
     leave_room(room)
     print("username: " + username + ", numUsers: " + str(num_users) + "is leaving")
+    num_users-=1
     emit('user joined', {
         'username':username,
         'numUsers': str(num_users)
