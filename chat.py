@@ -27,7 +27,7 @@ def on_join(data):
     emit('user joined', {
         'username': session['username'],
         'numUsers': str(num_users)
-    }, room=room)
+    }, room=session['room'])
     num_users+=1
     messages = Chat_history.query.filter_by(conversation=session['room'])
     for message in messages:
@@ -53,7 +53,6 @@ def on_disconnect():
     # if addedUser:
     #      num_users-=1
     # emit('user left', {'username':session['username']})
-    room = session.get('room')
     leave_room(session['room'])
     print("username: " + session['username'] + ", numUsers: " + str(num_users) + "is leaving")
     num_users-=1
@@ -68,7 +67,7 @@ def handleMessage(data):
     emit('new message', {
         'username':session['username'],
         'message':data
-    }, room=room)
+    }, room=session['room'])
     print("saving '" + data + "' from user '" + session['username'] + "' to room " + session['room'])
     message = Chat_history(message=data, username=session['username'], conversation=session['room'])
     db.session.add(message)
