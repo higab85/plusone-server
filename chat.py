@@ -7,6 +7,7 @@ import math
 
 socketio = SocketIO(app)
 Session(app)
+app.config['SESSION_TYPE'] = 'filesystem'
 num_users = 0
 addedUser = False
 
