@@ -1,10 +1,12 @@
 # https://www.youtube.com/watch?v=RdSrkkrj3l4
 from flask import render_template, request, session
 from flask_socketio import SocketIO, send, emit, join_room, leave_room
+from flask_session import Session
 from main import app, db
 import math
 
 socketio = SocketIO(app)
+Session(app)
 num_users = 0
 addedUser = False
 
