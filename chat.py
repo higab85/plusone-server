@@ -7,9 +7,6 @@ import math
 socketio = SocketIO(app)
 num_users = 0
 addedUser = False
-session = {}
-username = ""
-room = ""
 
 class Chat_history(db.Model):
     id = db.Column('id', db.Integer, primary_key=True)
@@ -19,36 +16,36 @@ class Chat_history(db.Model):
 
 @socketio.on('join')
 def on_join(data):
-    global room,username, addedUser, num_users
+    global addedUser, num_users
     # print('recieved: ' + str(data))
-    username = data['username']
+    session['username'] = data['username']
     # print('username: ' , username)
-    room = str(data['room'])
-    print("User '" + username + "' conected to room " + str(room) + " addedUser:" + str(addedUser))
-    join_room(room)
-    print("username: " + username + ", numUsers: " + str(num_users) + "is joining")
+    session['room'] = str(data['room'])
+    print("User '" + session['username'] + "' conected to room " + session['room'] + " addedUser:" + str(addedUser))
+    join_room(session['room'])
+    print("username: " + session['username'] + ", numUsers: " + str(num_users) + "is joining")
     emit('user joined', {
-        'username': username,
+        'username': session['username'],
         'numUsers': str(num_users)
     }, room=room)
     num_users+=1
-    messages = Chat_history.query.filter_by(conversation=room)
+    messages = Chat_history.query.filter_by(conversation=session['room'])
     for message in messages:
         emit('new message', {
         'username':message.username,
         'message':message.message
-    }, room=room)
+    }, room=session['room'])
 
 
 
 @socketio.on('typing')
 def on_typing():
     print(username + " is typing")
-    emit('typing', {'username':username}, room=room)
+    emit('typing', {'username':session['username']}, room=session['room'])
 
 @socketio.on('stop typing')
 def stop_typing():
-    emit('stop typing', {'username':username}, room=room)
+    emit('stop typing', {'username':session['username']}, room=session['room'])
 
 @socketio.on('disconnect')
 def on_disconnect():
@@ -57,23 +54,23 @@ def on_disconnect():
     #      num_users-=1
     # emit('user left', {'username':session['username']})
     room = session.get('room')
-    leave_room(room)
-    print("username: " + username + ", numUsers: " + str(num_users) + "is leaving")
+    leave_room(session['room'])
+    print("username: " + session['username'] + ", numUsers: " + str(num_users) + "is leaving")
     num_users-=1
     emit('user joined', {
-        'username':username,
+        'username':session['username'],
         'numUsers': str(num_users)
-    }, room=room)
+    }, room=session['room'])
 
 # @app.route('/<conversation>')
 @socketio.on('new message')
 def handleMessage(data):
     emit('new message', {
-        'username':username,
+        'username':session['username'],
         'message':data
     }, room=room)
-    print("saving '" + data + "' from user '" + username + "' to room " + room)
-    message = Chat_history(message=data, username=username, conversation=room)
+    print("saving '" + data + "' from user '" + session['username'] + "' to room " + session['room'])
+    message = Chat_history(message=data, username=session['username'], conversation=session['room'])
     db.session.add(message)
     db.session.commit()
 
