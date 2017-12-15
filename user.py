@@ -51,6 +51,16 @@ def create_user():
     db.session.commit()
     return jsonify({'message':'New user created!'})
 
+@app.route('/user', methods=['PUT'])
+@token_required
+def modify_user(current_user):
+    data = request.get_json()
+    current_user.name = data['name']
+    current_user.email = data['email']
+    current_user.password = generate_password_hash(data['password'], method='sha256')
+    db.session.commit()
+    return jsonify({'message':'User modified!'})
+
 @app.route('/login')
 def login():
     auth = request.authorization

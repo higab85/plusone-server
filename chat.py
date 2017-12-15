@@ -34,7 +34,7 @@ def on_join(data):
     num_users+=1
     messages = Chat_history.query.filter_by(conversation=session['room'])
     for message in messages:
-        emit('new message', {
+        emit('message history', {
         'username':message.username,
         'message':message.message
     }, room=session['room'])
