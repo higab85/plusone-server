@@ -107,8 +107,8 @@ def toggle_subcribe_to_event(current_user, event_id):
 
 @app.route('/event/<event_id>', methods=['DELETE'])
 @token_required
-def delete_event(current_user, event_id):
-    event = Event.query.filter_by(id=event_id, user_id=current_user.public_id).first()
+def delete_event(event_id):
+    event = Event.query.filter_by(id=event_id).first()
 
     if not event:
         return jsonify({'message' : 'You are not authorised to delete this event, or this event does not exist.'})
@@ -117,3 +117,18 @@ def delete_event(current_user, event_id):
     db.session.commit()
 
     return jsonify({'message' : 'Event deleted.'})
+
+@app.route('/event/<event_id>/users', methods=['GET'])
+@token_required
+def get_users_subscribed_to(current_user, event_id):
+    event = Event.query.filter_by(id=event_id).first()
+    users = event.attendees
+    output = []
+    for user in users:
+        user_data = {}
+        user_data['public_id'] = user.public_id
+        user_data['name'] = user.name
+        user_data['password'] = user.password
+        user_data['email'] = user.email
+        output.append(user_data)
+    return jsonify(output)

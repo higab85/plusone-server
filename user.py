@@ -23,6 +23,7 @@ def get_all_users(current_user):
         output.append(user_data)
     return jsonify({'users': output})
 
+
 # NOTE: FOR DEBUG ONLY, NOT FOR PRODUCTION
 @app.route('/user/<email>', methods=['GET'])
 @token_required
