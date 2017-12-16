@@ -11,7 +11,7 @@ def jsonifyEvents(events, current_user):
         output.append(event_data)
     return jsonify(output)
 
-def get_event_data(event, current_user):
+def get_event_data(event, user):
     event_data = {}
     event_data['id'] = event.id
     event_data['user_id'] = event.user_id
@@ -22,7 +22,7 @@ def get_event_data(event, current_user):
     event_data['type'] = event.type
     event_data['latitude'] = event.latitude
     event_data['longitude'] = event.longitude
-    event_data['subscription'] =  event in set(current_user.attending_events.all())
+    event_data['subscription'] =  event in set(user.attending_events.all())
     return event_data
 
 @app.route('/event', methods=['GET'])
