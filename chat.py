@@ -65,7 +65,7 @@ def on_disconnect():
         'username':session['username'],
         'numUsers': str(num_users)
     }, room=session['room'])
-    socketio.open()
+    socketio.connect()
 
 # @app.route('/<conversation>')
 @socketio.on('new message')
