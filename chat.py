@@ -5,7 +5,7 @@ from flask_session import Session
 from main import app, db
 import math
 
-socketio = SocketIO(app, ping_timeout=25000)
+socketio = SocketIO(app, ping_timeout=25000, manage_session=False)
 Session(app)
 app.config['SESSION_TYPE'] = 'filesystem'
 num_users = 0
