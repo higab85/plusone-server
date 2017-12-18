@@ -18,8 +18,12 @@ class Chat_history(db.Model):
     username = db.Column('user', db.String(100))
 
 
+
 @socketio.on('join')
 def on_join(data):
+    # keep connection up
+    setTimeout(sendHeartbeat, 25000)
+
     global addedUser, num_users
     # print('recieved: ' + str(data))
     session['username'] = data['username']
@@ -81,6 +85,12 @@ def handleMessage(data):
 def index():
     messages = Chat_history.query.all() #.filter_by(conversation=conversation)
     return render_template('index.html', messages=messages)
+
+
+def sendHeartbeat():
+    setTimeout(sendHeartbeat, 25000)
+    emit('ping', {'beat': 1})
+
 
 if __name__ == '__main__':
         socketio.run(app)
