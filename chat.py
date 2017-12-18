@@ -5,7 +5,7 @@ from flask_session import Session
 from main import app, db
 import math
 
-socketio = SocketIO(app, ping_timeout=25000)
+socketio = SocketIO(app)
 Session(app)
 app.config['SESSION_TYPE'] = 'filesystem'
 num_users = 0
@@ -65,6 +65,7 @@ def on_disconnect():
         'username':session['username'],
         'numUsers': str(num_users)
     }, room=session['room'])
+    socketio.open()
 
 # @app.route('/<conversation>')
 @socketio.on('new message')
