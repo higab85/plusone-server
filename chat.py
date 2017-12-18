@@ -5,7 +5,7 @@ from flask_session import Session
 from main import app, db
 import math
 
-socketio = SocketIO(app)
+socketio = SocketIO(app, ping_timeout=25000)
 Session(app)
 app.config['SESSION_TYPE'] = 'filesystem'
 num_users = 0
@@ -16,6 +16,7 @@ class Chat_history(db.Model):
     message = db.Column('message', db.String(500))
     conversation = db.Column('conversation', db.String(100))
     username = db.Column('user', db.String(100))
+
 
 @socketio.on('join')
 def on_join(data):
