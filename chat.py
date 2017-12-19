@@ -45,12 +45,18 @@ def on_join(data):
 
 @socketio.on('typing')
 def on_typing():
-    print(username + " is typing")
+    print(session['username'] + " is typing")
     emit('typing', {'username':session['username']}, room=session['room'])
 
 @socketio.on('stop typing')
 def stop_typing():
     emit('stop typing', {'username':session['username']}, room=session['room'])
+
+@socketio.on('buaa')
+def on_ping():
+    print("pong before emit")
+    emit('pong', {'empty':'empty'})
+    print("pong")
 
 @socketio.on('disconnect')
 def on_disconnect():
@@ -65,7 +71,6 @@ def on_disconnect():
         'username':session['username'],
         'numUsers': str(num_users)
     }, room=session['room'])
-    socketio.connect()
 
 # @app.route('/<conversation>')
 @socketio.on('new message')
