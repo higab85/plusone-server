@@ -1,5 +1,5 @@
 # plusone-server
-Server written in python (flask) to manage requests from the plusone app.
+Server written in python ([flask](http://flask.pocoo.org/) and [socket.io](https://socket.io/)) to manage requests from the plusone app.
 
 ## Features
 - Chat implemented in sockets-io
